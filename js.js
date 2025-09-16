@@ -19,6 +19,8 @@ window.addEventListener('DOMContentLoaded', function() {
 // combining overline mark
 const OVERLINE = "\u0305";
 
+
+
 // base single-letter map (lowercase to uppercase Coptic)
 const SINGLE = {
   "a":"Ⲁ","b":"Ⲃ","g":"Ⲅ","d":"Ⲇ","e":"Ⲉ","z":"Ⲍ",
@@ -52,6 +54,7 @@ function specials(ch) {
   if (ch === "j") return "Ϫ";
   if (ch === "x") return "Ϩ";
   if (ch === ".") return " ";  // dots = space
+
   return null;
 }
 
@@ -65,6 +68,8 @@ function applyOverline(str) {
 function convertCoptic(input) {
   let t = input;
 
+  t = t.replace(/\bcwmas\b/g, "ⲐⲰⲘⲀⲤ"); // Thomas
+
   // handle N. → Ⲛ̅
   t = t.replace(/\bN\./g, "Ⲛ" + OVERLINE);
   t = t.replace(/\bn\./g, "ⲛ" + OVERLINE);
@@ -74,6 +79,9 @@ function convertCoptic(input) {
 
   // suspensions with backtick (word` → apply overline to last letter)
   t = t.replace(/([A-Za-z$]+)`/g, (_,seg) => applyOverline(convertCoptic(seg)));
+
+// '!' marks iota with diaeresis in this ASCII scheme (e.g., !oudas -> Ⲓ̈ⲟⲩⲇⲁⲥ)
+t = t.replace(/!/g, "Ⲓ\u0308");
 
   // digraphs
   DIGRAPHS.forEach(([pat,repl]) => { t = t.replace(pat, repl); });
