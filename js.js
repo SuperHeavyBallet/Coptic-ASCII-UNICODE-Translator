@@ -12,7 +12,7 @@ window.addEventListener('DOMContentLoaded', function() {
         let currentInputText = inputTextArea.value;
 
         let convertedText = convertCoptic(currentInputText);
-        outputTextArea.textContent = convertedText;
+        outputTextArea.value = convertedText;
     })
 });
 
@@ -21,25 +21,28 @@ const OVERLINE = "\u0305";
 
 
 
+
+
 // base single-letter map (lowercase to uppercase Coptic)
 const SINGLE = {
-  "a":"Ⲁ","b":"Ⲃ","g":"Ⲅ","d":"Ⲇ","e":"Ⲉ","z":"Ⲍ",
-  "h":"Ⲏ","q":"Ⲑ","i":"Ⲓ","k":"Ⲕ","l":"Ⲗ","m":"Ⲙ",
-  "n":"Ⲛ","o":"Ⲟ","p":"Ⲡ","r":"Ⲣ","s":"Ⲥ","t":"Ⲧ",
-  "u":"Ⲩ","w":"Ⲱ","f":"Ϥ","y":"Ⲩ","c":"Ⲥ","v":"Ⲃ"
-};
+    "a":"Ⲁ","b":"Ⲃ","g":"Ⲅ","d":"Ⲇ","e":"Ⲉ","z":"Ⲍ",
+    "h":"Ⲏ","q":"Ⳓ", // <— was "Ⲑ"
+    "i":"Ⲓ","k":"Ⲕ","l":"Ⲗ","m":"Ⲙ",
+    "n":"Ⲛ","o":"Ⲟ","p":"Ⲡ","r":"Ⲣ","s":"Ⲥ","t":"Ⲧ",
+    "u":"Ⲩ","w":"Ⲱ","f":"Ϥ","y":"Ⲩ","c":"Ⲥ","v":"Ⲃ"
+  };
 
 // digraphs (order matters)
 const DIGRAPHS = [
-  [/ch/g, "Ⲑ"],  // theta
-  [/th/g, "Ⲑ"],  // fallback
-  [/ph/g, "Ⲫ"],
-  [/kh/g, "Ⲭ"],
-  [/ps/g, "Ⲯ"],
-  [/sh/g, "Ϣ"],
-  [/ti/g, "Ϯ"],
-  [/ou/g, "ⲞⲨ"]
-];
+    [/ch/gi, "Ⲑ"],   // you want ch -> theta (as your “echp`” shows)
+    [/th/gi, "Ⲑ"],
+    [/ph/gi, "Ⲫ"],
+    [/kh/gi, "Ⲭ"],
+    [/ps/gi, "Ⲯ"],
+    [/sh/gi, "Ϣ"],
+    [/ti/gi, "Ϯ"],
+    [/ou/gi, "ⲞⲨ"]
+  ];
 
 // nomina sacra (expand as needed)
 const NOMINA = [
@@ -58,43 +61,67 @@ function specials(ch) {
   return null;
 }
 
-// overline handler: add U+0305 to last letter
-function applyOverline(str) {
-  if (!str) return str;
-  return str.slice(0,-1) + str.slice(-1) + OVERLINE;
-}
+
+
+// --- add/replace this dotted-capitals rule (replaces the N. special) ---
+/*
+  Any capital followed by a dot is a suspended letter: overline it.
+  Example: "M." -> Ⲙ̅, "N." -> Ⲛ̅
+*/
+function overlineDottedCapitals(t) {
+    return t.replace(/\b([A-Z])\./g, (_, cap) => {
+      const mapped = SINGLE[cap.toLowerCase()] || cap;
+      return mapped + OVERLINE;
+    });
+  }
 
 // main converter
 function convertCoptic(input) {
-  let t = input;
+    let t = input;
+  
+    t = t.replace(/\bcwmas\b/g, "ⲐⲰⲘⲀⲤ"); // Thomas
+  
+    // nomina sacra first
+    NOMINA.forEach(([pat, repl]) => { t = t.replace(pat, repl); });
 
-  t = t.replace(/\bcwmas\b/g, "ⲐⲰⲘⲀⲤ"); // Thomas
+     // normalize ".`" -> "`" so your existing rule matches
+t = t.replace(/\.`/g, "`");
+  
+    // general dotted-capitals suspension (covers M. N. etc.)
+    t = overlineDottedCapitals(t);
 
-  // handle N. → Ⲛ̅
-  t = t.replace(/\bN\./g, "Ⲛ" + OVERLINE);
-  t = t.replace(/\bn\./g, "ⲛ" + OVERLINE);
-
-  // nomina sacra
-  NOMINA.forEach(([pat,repl]) => { t = t.replace(pat, repl); });
-
-  // suspensions with backtick (word` → apply overline to last letter)
-  t = t.replace(/([A-Za-z$]+)`/g, (_,seg) => applyOverline(convertCoptic(seg)));
-
-// '!' marks iota with diaeresis in this ASCII scheme (e.g., !oudas -> Ⲓ̈ⲟⲩⲇⲁⲥ)
-t = t.replace(/!/g, "Ⲓ\u0308");
-
-  // digraphs
-  DIGRAPHS.forEach(([pat,repl]) => { t = t.replace(pat, repl); });
-
-  // character by character
-  let out = "";
-  for (let ch of t) {
-    const sp = specials(ch);
-    if (sp) { out += sp; continue; }
-    const map = SINGLE[ch.toLowerCase()];
-    if (map) out += map;
-    else out += ch;
+   
+  
+    t = t.replace(/([A-Za-z$]+)`/g, (_, seg) => {
+        // apply digraphs within the segment first
+        DIGRAPHS.forEach(([pat, repl]) => { seg = seg.replace(pat, repl); });
+      
+        let out = "";
+        for (const ch of seg) {
+          const sp = specials(ch);
+          if (sp) { out += sp; continue; }
+          const mapped = SINGLE[ch.toLowerCase()] || ch;
+      
+          if (/[A-Z]/.test(ch)) out += mapped + OVERLINE;
+          else out += mapped;
+        }
+        // overline the final letter of the segment
+        return out.slice(0, -1) + out.slice(-1) + OVERLINE;
+      });
+  
+    // '!' -> iota with diaeresis
+    t = t.replace(/!/g, "Ⲓ\u0308");
+  
+    // digraphs (order matters)
+    DIGRAPHS.forEach(([pat, repl]) => { t = t.replace(pat, repl); });
+  
+    // character-by-character fallback
+    let out = "";
+    for (let ch of t) {
+      const sp = specials(ch);
+      if (sp) { out += sp; continue; }
+      const map = SINGLE[ch.toLowerCase()];
+      out += map ? map : ch;
+    }
+    return out;
   }
-
-  return out;
-}
