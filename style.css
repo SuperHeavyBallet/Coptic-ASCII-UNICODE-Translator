@@ -1,0 +1,96 @@
+body{
+    background-color: rgb(211, 200, 200);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.title{
+    margin-bottom: 0.25rem;
+    padding-bottom: 0rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.sub-title{
+    margin: 0.25rem 1rem 1rem 1rem;
+    padding: 0rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+p{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.text-submit, .text-output{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+button{
+    margin: 1rem 1rem 3rem 1rem;
+    width: 10rem;
+    border-radius: 10px;
+    border: 0;
+    padding: 0.5rem;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 600;
+}
+
+button:hover{
+    transform: scale(105%);
+    cursor: pointer;
+    background-color: rgb(145, 145, 240);
+    color: white
+}
+
+.clear-button:hover{
+    background-color: rgb(209, 94, 94);
+    color: white
+}
+
+textarea {
+    min-width: 30rem;
+    max-width: 60rem;
+    min-height: 10rem;
+    border-radius: 10px;
+    border: 0;
+    padding: 1rem;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    margin: 0.5rem 1rem;
+}
+
+.text-output-area{
+    background:#EEE; width:30rem; height:10rem; border-radius:10px;
+    padding:1rem; overflow:auto; white-space:pre-wrap; word-break:break-word;
+    user-select:text; /* selectable */
+    margin: 0.5rem 1rem;
+}
+
+.copy-button{ 
+    margin-top:0.25rem; 
+}
+
+.text-output-area:hover{
+    cursor: text
+}
+
+
+textarea:focus{
+    transform: scale(105%);
+    outline-color: rgb(145, 145, 240);
+}
+
+footer{
+    margin-top: 2rem;
+}
+footer p{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0.15rem;
+    padding: 0.1rem;
+}

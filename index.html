@@ -5,20 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coptic Translator</title>
     <script src="js.js"></script>
+    <link href="style.css" rel="stylesheet">
 </head>
 <body>
 
-    <h1>COPTIC TRANSLATOR</h1>
-    <h3>ASCII > UNICODE</h3>
+    <h1 class="title">COPTIC TRANSLATOR</h1>
+    
+    <h3 class="sub-title">ASCII > UNICODE</h3>
 
-    <form name="textSubmit" id="textSubmit">
+    <form name="textSubmit" id="textSubmit" class="text-submit">
+        <p>Place raw ASCII code here. eg: " <i>swtM ero.f xM.pek.`</i> "</p>
         <textarea id="inputTextArea" placeholder="Input"></textarea>
 
-        <button type="submit" id="submitTextButton">SUBMIT</button>
+        <button type="submit" id="translateTextButton">TRANSLATE</button>
     </form>
 
-    <textarea id="outputTextArea" placeholder="Output"></textarea>
- 
+    <div class="text-output">
+        <p>Proper Unicode Ouput here, eg: "ⲤⲰⲦⲘ ⲈⲢⲞ Ϥ ϨⲘ ⲠⲈⲔ̅"</p>
+        <pre id="outputTextArea" class="text-output-area" aria-label="Conversion output" tabindex="0"></pre>
+        <div>
+        <button id="copyBtn" type="button" class="copy-button">COPY</button>
+        <button id="clearBtn" class="clear-button">CLEAR</button>
+    </div>
+</div>
+
+
+
+<footer>
+    <p>This is a work in progress, with new rules added as they emerge in use-cases</p>
+    <p>Built by Alexander Gorham - SuperHeavyBallet @ GitHub</p>
+    
+</footer>
     
 </body>
 </html>

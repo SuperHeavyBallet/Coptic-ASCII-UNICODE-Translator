@@ -3,17 +3,52 @@ window.addEventListener('DOMContentLoaded', function() {
     const inputTextArea = document.getElementById("inputTextArea");
     const outputTextArea = this.document.getElementById("outputTextArea");
 
-    const submitButton = this.document.getElementById("submitTextButton");
+    const translateButton = this.document.getElementById("translateTextButton");
 
 
-    submitButton.addEventListener("click", (e) =>{
+    translateButton.addEventListener("click", (e) =>{
         e.preventDefault();
 
         let currentInputText = inputTextArea.value;
 
-        let convertedText = convertCoptic(currentInputText);
-        outputTextArea.value = convertedText;
+        if(currentInputText.trim() !== "")
+        {
+            let convertedText = convertCoptic(currentInputText).normalize('NFC');
+            outputTextArea.textContent = convertedText;
+        }
+        else
+        {
+            outputTextArea.textContent = "Nothing to translate, boss!";
+        }
+            
+        
+        
     })
+
+  
+    const copyBtn = document.getElementById('copyBtn');
+
+    copyBtn.addEventListener('click', async () => {
+        const text = outputTextArea.textContent || '';
+
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = 'COPIED';
+        setTimeout(()=> copyBtn.textContent = 'COPY', 1200);
+
+    });
+
+    const clearBtn = document.getElementById('clearBtn');
+
+    clearBtn.addEventListener('click', (e) =>{
+        e.preventDefault();
+
+        if(this.window.confirm("Are you sure you want to clear text contents?"))
+        {
+            outputTextArea.textContent = "";
+            inputTextArea.value = "";
+        }
+    })
+
 });
 
 // combining overline mark
