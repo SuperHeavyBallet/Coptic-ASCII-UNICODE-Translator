@@ -11,19 +11,21 @@
 
     <h1 class="title">COPTIC TRANSLATOR</h1>
     
-    <h3 class="sub-title">ASCII > UNICODE</h3>
+    <h3 class="sub-title">ASCII > NFC UNICODE</h3>
 
     <form name="textSubmit" id="textSubmit" class="text-submit">
-        <p>Place raw ASCII code here. eg: " <i>swtM ero.f xM.pek.`</i> "</p>
+        <p>Place raw ASCII code here.</p>
+        <p class="example-text"><i>eg: <strong>swtM ero.f xM.pek.`</strong></i></p>
         <textarea id="inputTextArea" placeholder="Input"></textarea>
 
         <button type="submit" id="translateTextButton">TRANSLATE</button>
     </form>
 
     <div class="text-output">
-        <p>Proper Unicode Ouput here, eg: "ⲤⲰⲦⲘ ⲈⲢⲞ Ϥ ϨⲘ ⲠⲈⲔ̅"</p>
+        <p>Proper NFC Unicode Ouput here.</p>
+        <p class="example-text"><i>eg: <strong> ⲤⲰⲦⲘ ⲈⲢⲞ Ϥ ϨⲘ ⲠⲈⲔ̅</strong></i></p>
         <pre id="outputTextArea" class="text-output-area" aria-label="Conversion output" tabindex="0"></pre>
-        <div>
+        <div class="output-buttons">
         <button id="copyBtn" type="button" class="copy-button">COPY</button>
         <button id="clearBtn" class="clear-button">CLEAR</button>
     </div>
@@ -32,7 +34,7 @@
 
 
 <footer>
-    <p>This is a work in progress, with new rules added as they emerge in use-cases</p>
+    <p><i>This is a work in progress, with new rules added as they emerge in use-cases</i></p>
     <p>Built by Alexander Gorham - SuperHeavyBallet @ GitHub</p>
     
 </footer>
