@@ -112,8 +112,10 @@ function overlineDottedCapitals(t) {
 
 // main converter
 function convertCoptic(input) {
-    let t = input;
+    let t = toString(input);
   
+    
+
     t = t.replace(/\bcwmas\b/g, "ⲐⲰⲘⲀⲤ"); // Thomas
   
     // nomina sacra first
