@@ -60,10 +60,10 @@ First, a new variable is declared:
 
 **t**
 
-With the value of the input parameter, which ideally should be a string, but we convert it to be safe using **toString(input)**
+With the value of the input parameter.
 
 First, we have an 'ugly' solution:
 
 **t = t.replace(/\bcwmas\b/g, "ⲐⲰⲘⲀⲤ"); // Thomas**
 
-Which quickly checks via regex for the known quantity of 'Thomas' (bcwmas) which may be quite frequent, and simply replaces those characters with the correct Unicode (ⲐⲰⲘⲀⲤ) rather than continuing through the further checks.
+Which quickly checks **t** via regex for the known quantity of 'Thomas' (bcwmas) which may be quite frequent, and simply replaces those characters with the correct Unicode (ⲐⲰⲘⲀⲤ) rather than continuing through the further checks.

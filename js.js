@@ -112,7 +112,7 @@ function overlineDottedCapitals(t) {
 
 // main converter
 function convertCoptic(input) {
-    let t = toString(input);
+    let t = input;
   
     
 
@@ -122,7 +122,7 @@ function convertCoptic(input) {
     NOMINA.forEach(([pat, repl]) => { t = t.replace(pat, repl); });
 
      // normalize ".`" -> "`" so your existing rule matches
-t = t.replace(/\.`/g, "`");
+    t = t.replace(/\.`/g, "`");
   
     // general dotted-capitals suspension (covers M. N. etc.)
     t = overlineDottedCapitals(t);
@@ -130,20 +130,26 @@ t = t.replace(/\.`/g, "`");
    
   
     t = t.replace(/([A-Za-z$]+)`/g, (_, seg) => {
+
         // apply digraphs within the segment first
         DIGRAPHS.forEach(([pat, repl]) => { seg = seg.replace(pat, repl); });
       
         let out = "";
+
         for (const ch of seg) {
+
           const sp = specials(ch);
           if (sp) { out += sp; continue; }
+
           const mapped = SINGLE[ch.toLowerCase()] || ch;
       
           if (/[A-Z]/.test(ch)) out += mapped + OVERLINE;
           else out += mapped;
         }
+
         // overline the final letter of the segment
         return out.slice(0, -1) + out.slice(-1) + OVERLINE;
+
       });
   
     // '!' -> iota with diaeresis
@@ -154,11 +160,13 @@ t = t.replace(/\.`/g, "`");
   
     // character-by-character fallback
     let out = "";
+
     for (let ch of t) {
       const sp = specials(ch);
       if (sp) { out += sp; continue; }
       const map = SINGLE[ch.toLowerCase()];
       out += map ? map : ch;
     }
+
     return out;
   }
