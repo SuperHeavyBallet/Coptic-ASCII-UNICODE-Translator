@@ -67,3 +67,18 @@ First, we have an 'ugly' solution:
 **t = t.replace(/\bcwmas\b/g, "ⲐⲰⲘⲀⲤ"); // Thomas**
 
 Which quickly checks **t** via regex for the known quantity of 'Thomas' (bcwmas) which may be quite frequent, and simply replaces those characters with the correct Unicode (ⲐⲰⲘⲀⲤ) rather than continuing through the further checks.
+
+Next, we check against the NOMINA SACRA (Sacred Names, usually Abbreviations of character names) and replace any found symbols:
+
+```NOMINA.forEach(([pat, repl]) => { t = t.replace(pat, repl); });```
+
+The NOMINA SACRA CONST (Updated as new names emerge)
+
+```
+const NOMINA = [
+  [/\bIS\b/g, "Ⲓ" + OVERLINE + "Ⲥ" + OVERLINE],
+  [/\bIC\b/g, "Ⲓ" + OVERLINE + "Ⲥ" + OVERLINE],
+  [/\bXC\b/g, "Ⲭ" + OVERLINE + "Ⲥ" + OVERLINE]
+];
+```
+
