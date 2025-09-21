@@ -35,18 +35,18 @@ I will walk throuh the process after placing suitable text and pressing submit.
 
 On the click event, the variable:
 
-**currentInputText**
+ ```let currentInputText = inputTextArea.value;```
 
 is assigned with the value of the Input Text Area.
 
 Then, we check if the Input Text Area is composed of valid text by using String.Trim() to remove whitespaces, and check that the contents is actual characters.
 If it is, then we create a new variable:
 
-**convertedText**
+```let convertedText...;```
 
 Which is assigned the value of:
 
-**copticConverter(currentInputText).normalize('NFC)**
+```copticConverter(currentInputText).normalize('NFC)```
 
 Which places the currentInputText into that function as the parameter, and normalizes the result to NFC format
 
@@ -54,19 +54,19 @@ If the Input Text Area value is NOT valid, ie empty space, the output returns a 
 
 Now let's look at the actual function:
 
-**copticConverter(input)**
+```copticConverter(input)```
 
 First, a new variable is declared:
 
-**t**
+```let t = input;```
 
 With the value of the input parameter.
 
 First, we have an 'ugly' solution:
 
-**t = t.replace(/\bcwmas\b/g, "ⲐⲰⲘⲀⲤ"); // Thomas**
+```t = t.replace(/\bcwmas\b/g, "ⲐⲰⲘⲀⲤ"); // Thomas```
 
-Which quickly checks **t** via regex for the known quantity of 'Thomas' (bcwmas) which may be quite frequent, and simply replaces those characters with the correct Unicode (ⲐⲰⲘⲀⲤ) rather than continuing through the further checks.
+Which quickly checks ```t``` via regex for the known quantity of 'Thomas' (bcwmas) which may be quite frequent, and simply replaces those characters with the correct Unicode (ⲐⲰⲘⲀⲤ) rather than continuing through the further checks.
 
 Next, we check against the NOMINA SACRA (Sacred Names, usually Abbreviations of character names) and replace any found symbols:
 
