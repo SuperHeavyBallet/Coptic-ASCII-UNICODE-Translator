@@ -139,7 +139,7 @@ Which quickly checks ```t``` via regex for the known quantity of 'Thomas' (bcwma
 
 **NOMINA SACRA**
 
-Next, we check against the common Coptic NOMINA SACRA (Sacred Names, usually Abbreviations of character names) and replace any found symbols:
+Next, we check against the common Coptic NOMINA SACRA (Sacred Names, usually abbreviations of character names) and replace any found symbols:
 
 ``` js
 NOMINA.forEach(([pat, repl]) => { t = t.replace(pat, repl); });
@@ -165,7 +165,7 @@ A collection of common Nomina Sacra in Coptic:
 
 ```
 
-The NOMINA SACRA CONST (Updated as new names emerge)
+The NOMINA SACRA array of key–value pairs (Updated as new names emerge)
 
 ``` js
 const NOMINA = [
@@ -257,9 +257,9 @@ Return:
 
 Concatenates the mapped character with OVERLINE (which is \u0305, the combining overline).
 
-So "I." becomes "Ⲓ̅", for instance.
+So "I." becomes " Ⲓ̅ ", for instance.
 
-In plain English
+In plain English:
 
 This function finds capital letters followed by a dot (a shorthand scribal way of writing nomina sacra) and replaces them with the mapped Coptic letter, marked with an overline.
 
@@ -314,7 +314,7 @@ First, we check via regex for:
 ```
 
 Which captures a run of ASCII letters (and $) right before a backtick.
-Examples matched: IS in IS``` `` ``` , ``` KyriocinKyrioc`` ```. The backtick itself isn’t captured; it just marks “end of sacred segment”.
+Examples matched: IS in ```IS ` ``` , KyriocinKyrioc in ``` KyriocinKyrioc ` ```. The backtick itself isn’t captured; it just marks “end of sacred segment”.
 
 **SEGMENT TREATMENT**
 
