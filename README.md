@@ -283,7 +283,6 @@ Next we walk through this replacement process
 ``` js
 t = t.replace(/([A-Za-z$]+)`/g, (_, seg) => {
 
-        // apply digraphs within the segment first
         DIGRAPHS.forEach(([pat, repl]) => { seg = seg.replace(pat, repl); });
       
         let out = "";
@@ -299,7 +298,6 @@ t = t.replace(/([A-Za-z$]+)`/g, (_, seg) => {
           else out += mapped;
         }
 
-        // overline the final letter of the segment
         return /\p{L}$/u.test(out) && !out.endsWith(OVERLINE) ? out + OVERLINE : out;
 
       });
@@ -324,12 +322,10 @@ Each of these captured segments is then treated to this process:
 
 ``` js
 (_, seg) => {
-  // 1) digraph pass
   DIGRAPHS.forEach(([pat, repl]) => { seg = seg.replace(pat, repl); });
 ```
 
 ``` js
-// digraphs (order matters)
 const DIGRAPHS = [
     [/ch/gi, "Ⲑ"],   
     [/th/gi, "Ⲑ"],
@@ -347,9 +343,8 @@ Digraphs first: We normalize things like OU, TH, etc., before single-letter mapp
 **SPECIALS**
 
 ``` js
-// special symbols
 function specials(ch) {
-  if (ch === "$") return "Ⳃ";  // lunate sigma
+  if (ch === "$") return "Ⳃ";
   if (ch === "j") return "Ϫ";
   if (ch === "x") return "Ϩ";
   if (ch === ".") return " ";  // dots = space
@@ -362,7 +357,6 @@ Note - " . " , Period as an input ASCII symbols maps to a blank space, as that i
 
 
 ``` js
- // 2) per-char mapping
   let out = "";
   for (const ch of seg) {
     const sp = specials(ch);
@@ -382,7 +376,6 @@ Simple Latin→Coptic letter map check for the character
 **UPPERCASE OVERLINE RULE**
 
 ```js
-    // Uppercase source letters get an overline here
     if (/[A-Z]/.test(ch)) out += mapped + OVERLINE;
     else out += mapped;
   }
@@ -424,6 +417,8 @@ const DIGRAPHS = [
     [/ou/gi, "ⲞⲨ"]
   ];
 ```
+
+NOTE - " ti " is given context variations, depending on its position
 
 ``` js
     DIGRAPHS.forEach(([pat, repl]) => { t = t.replace(pat, repl); });

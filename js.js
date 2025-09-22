@@ -54,10 +54,6 @@ window.addEventListener('DOMContentLoaded', function() {
 // combining overline mark for NOMINA SACRA ET AL
 const OVERLINE = "\u0305";
 
-
-
-
-
 // base single-letter map (lowercase to uppercase Coptic)
 const SINGLE = {
     "a":"Ⲁ","b":"Ⲃ","g":"Ⲅ","d":"Ⲇ","e":"Ⲉ","z":"Ⲍ",
@@ -99,10 +95,6 @@ const NOMINA = [
     [/\bGLT\b/g, "ⲅ" + OVERLINE + "ⲗ" + OVERLINE],  // Golgotha (variant contraction)
     [/\bSR\b/g, "Ⲥ" + OVERLINE + "Ⲣ" + OVERLINE],   // Syria
     [/\bBL\b/g, "Ⲃ" + OVERLINE + "Ⲗ" + OVERLINE],   // Bethlehem
-
-    
-
-
   ];
 
 // special symbols
@@ -115,9 +107,6 @@ function specials(ch) {
   return null;
 }
 
-
-
-// --- add/replace this dotted-capitals rule (replaces the N. special) ---
 /*
   Any capital followed by a dot is a suspended letter: overline it.
   Example: "M." -> Ⲙ̅, "N." -> Ⲛ̅
@@ -131,23 +120,22 @@ function overlineDottedCapitals(t) {
 
 // main converter
 function convertCoptic(input) {
-    let t = input;
-  
-    
 
-    t = t.replace(/\bcwmas\b/g, "ⲐⲰⲘⲀⲤ"); // Thomas
+    let t = input;
+
+    // Thomas and explicit patterns
+    t = t.replace(/\bcwmas\b/g, "ⲐⲰⲘⲀⲤ"); 
   
-    // nomina sacra first
+    // Nomina Sacra first
     NOMINA.forEach(([pat, repl]) => { t = t.replace(pat, repl); });
 
-     // normalize ".`" -> "`" so your existing rule matches
+     // Normalize ".`" -> "`" so existing rules match
     t = t.replace(/\.`/g, "`");
   
-    // general dotted-capitals suspension (covers M. N. etc.)
+    // General dotted-capitals suspension (covers M. N. etc.)
     t = overlineDottedCapitals(t);
 
-   
-  
+    // Segment + Overline Detection
     t = t.replace(/([A-Za-z$]+)`/g, (_, seg) => {
 
         // apply digraphs within the segment first
@@ -166,7 +154,7 @@ function convertCoptic(input) {
           else out += mapped;
         }
 
-        // overline the final letter of the segment (If it does not already have an Overline to prevent duplication)
+        // Overline the final letter of the segment (If it does not already have an Overline to prevent duplication)
         return /\p{L}$/u.test(out) && !out.endsWith(OVERLINE) ? out + OVERLINE : out;
 
       });
@@ -174,10 +162,10 @@ function convertCoptic(input) {
     // '!' -> iota with diaeresis
     t = t.replace(/!/g, "Ⲓ\u0308");
   
-    // digraphs (order matters)
+    // Digraphs (order matters)
     DIGRAPHS.forEach(([pat, repl]) => { t = t.replace(pat, repl); });
   
-    // character-by-character fallback
+    // Character-by-character fallback
     let out = "";
 
     for (let ch of t) {
