@@ -1,7 +1,7 @@
 window.addEventListener('DOMContentLoaded', function() {
     
     const inputTextArea = document.getElementById("inputTextArea");
-    const outputTextArea = this.document.getElementById("outputTextArea");
+    const outputText = document.getElementById("outputTextArea");
 
     const translateButton = this.document.getElementById("translateTextButton");
 
@@ -14,11 +14,11 @@ window.addEventListener('DOMContentLoaded', function() {
         if(currentInputText.trim() !== "")
         {
             let convertedText = convertCoptic(currentInputText).normalize('NFC');
-            outputTextArea.textContent = convertedText;
+            outputText.textContent = convertedText;
         }
         else
         {
-            outputTextArea.textContent = "Nothing to translate, boss!";
+            outputText.textContent = "Nothing to translate, boss!";
         }
             
         
@@ -29,7 +29,7 @@ window.addEventListener('DOMContentLoaded', function() {
     const copyBtn = document.getElementById('copyBtn');
 
     copyBtn.addEventListener('click', async () => {
-        const text = outputTextArea.textContent || '';
+        const text = outputText.textContent || '';
 
         await navigator.clipboard.writeText(text);
         copyBtn.textContent = 'COPIED';
@@ -42,16 +42,16 @@ window.addEventListener('DOMContentLoaded', function() {
     clearBtn.addEventListener('click', (e) =>{
         e.preventDefault();
 
-        if(this.window.confirm("Are you sure you want to clear text contents?"))
+        if(window.confirm("Are you sure you want to clear text contents?"))
         {
-            outputTextArea.textContent = "";
+            outputText.textContent = "";
             inputTextArea.value = "";
         }
     })
 
 });
 
-// combining overline mark
+// combining overline mark for NOMINA SACRA ET AL
 const OVERLINE = "\u0305";
 
 
@@ -61,7 +61,7 @@ const OVERLINE = "\u0305";
 // base single-letter map (lowercase to uppercase Coptic)
 const SINGLE = {
     "a":"Ⲁ","b":"Ⲃ","g":"Ⲅ","d":"Ⲇ","e":"Ⲉ","z":"Ⲍ",
-    "h":"Ⲏ","q":"Ⳓ", // <— was "Ⲑ"
+    "h":"Ⲏ","q":"Ⳓ", // "q" by most cases maps to "Ⲑ", but in this old text, "Ⳓ" is required
     "i":"Ⲓ","k":"Ⲕ","l":"Ⲗ","m":"Ⲙ",
     "n":"Ⲛ","o":"Ⲟ","p":"Ⲡ","r":"Ⲣ","s":"Ⲥ","t":"Ⲧ",
     "u":"Ⲩ","w":"Ⲱ","f":"Ϥ","y":"Ⲩ","c":"Ⲥ","v":"Ⲃ"
@@ -69,22 +69,41 @@ const SINGLE = {
 
 // digraphs (order matters)
 const DIGRAPHS = [
-    [/ch/gi, "Ⲑ"],   // you want ch -> theta (as your “echp`” shows)
+    [/ch/gi, "Ⲭ"],   
     [/th/gi, "Ⲑ"],
     [/ph/gi, "Ⲫ"],
     [/kh/gi, "Ⲭ"],
     [/ps/gi, "Ⲯ"],
     [/sh/gi, "Ϣ"],
-    [/ti/gi, "Ϯ"],
+    [/\bti\b/gi, "Ϯ"],                // exact word 'ti'
+    [/\bti(?=\s|[·.,;:!?’'")\]])/gi, "Ϯ"], // article 'ti' before space/punct
     [/ou/gi, "ⲞⲨ"]
   ];
 
+
 // nomina sacra (expand as needed)
 const NOMINA = [
-  [/\bIS\b/g, "Ⲓ" + OVERLINE + "Ⲥ" + OVERLINE],
-  [/\bIC\b/g, "Ⲓ" + OVERLINE + "Ⲥ" + OVERLINE],
-  [/\bXC\b/g, "Ⲭ" + OVERLINE + "Ⲥ" + OVERLINE]
-];
+    // Core names
+    [/\bIS\b/g, "Ⲓ" + OVERLINE + "Ⲥ" + OVERLINE],   // Jesus
+    [/\bIC\b/g, "Ⲓ" + OVERLINE + "Ⲥ" + OVERLINE],   // Jesus (variant)
+    [/\bXC\b/g, "Ⲭ" + OVERLINE + "Ⲥ" + OVERLINE],   // Christ
+    [/\bNC\b/g, "Ⲛ" + OVERLINE + "Ⲥ" + OVERLINE],   // God
+    [/\bKC\b/g, "Ⲕ" + OVERLINE + "Ⲥ" + OVERLINE],   // Lord
+    [/\bPN\b/g, "Ⲡ" + OVERLINE + "Ⲓ" + OVERLINE],   // Spirit (Pneuma)
+    [/\bSY\b/g, "Ⲥ" + OVERLINE + "Ⲩ" + OVERLINE],   // Savior
+    [/\bCR\b/g, "Ⲥ" + OVERLINE + "Ⲣ" + OVERLINE],   // Cross (Stauros)
+  
+    // Place names (less common, but attested)
+    [/\bIL\b/g, "Ⲓ" + OVERLINE + "ⲗ" + OVERLINE],   // Israel
+    [/\bGL\b/g, "Ⲅ" + OVERLINE + "Ⲗ" + OVERLINE],   // Galilee
+    [/\bGLT\b/g, "ⲅ" + OVERLINE + "ⲗ" + OVERLINE],  // Golgotha (variant contraction)
+    [/\bSR\b/g, "Ⲥ" + OVERLINE + "Ⲣ" + OVERLINE],   // Syria
+    [/\bBL\b/g, "Ⲃ" + OVERLINE + "Ⲗ" + OVERLINE],   // Bethlehem
+
+    
+
+
+  ];
 
 // special symbols
 function specials(ch) {
@@ -147,8 +166,8 @@ function convertCoptic(input) {
           else out += mapped;
         }
 
-        // overline the final letter of the segment
-        return out.slice(0, -1) + out.slice(-1) + OVERLINE;
+        // overline the final letter of the segment (If it does not already have an Overline to prevent duplication)
+        return /\p{L}$/u.test(out) && !out.endsWith(OVERLINE) ? out + OVERLINE : out;
 
       });
   
